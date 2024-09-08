@@ -9,7 +9,7 @@ export const getFullPath = async (rootDir: string, lineItem: LineItem, index: nu
   const parts = lineItem.name.split('-').map((part) => part.trim());
 
   // Extract base name (everything before the first dash)
-  const baseName = parts[0].split(' ').slice(0, -1).join('_').toLowerCase();
+  const baseName = normalize(parts[0].split(' ').slice(0, -1).join('_').toLowerCase());
 
   // Extract color (second part if it exists, otherwise 'default')
   const color = parts[1] ? parts[1].toLowerCase().replace(/\s+/g, '_') : 'default';
@@ -22,7 +22,7 @@ export const getFullPath = async (rootDir: string, lineItem: LineItem, index: nu
   const filename = [baseName, color, size, `${index}`].filter(Boolean).join('_') + '.arxp';
 
   // Construct full path
-  const fullPath = await path.join(rootDir, baseName, color, normalize(filename));
+  const fullPath = await path.join(rootDir, baseName, color, filename);
 
   return fullPath;
 };
