@@ -34,25 +34,36 @@ export const getAssemblyItem = async (itemId: string) => {
   );
 
   const blankPromise = async () => {
-    const { data: blank } = await supabase
-      .from('blanks')
-      .select('*')
-      .eq('id', data.product?.blank_id || '')
-      .single();
+    try {
+      const { data: blank, error } = await supabase
+        .from('blanks')
+        .select('*')
+        .eq('id', data.product?.blank_id || '')
+        .single();
 
-    const blankVariant = await supabase
-      .from('product_variants')
-      .select('*, blank_variants(*)')
-      .eq('id', data.variant_id || '')
-      .single()
-      .then(({ data }) => data?.blank_variants || null);
+      console.log(error);
 
-    if (!blank || !blankVariant) return null;
+      const blankVariant = await supabase
+        .from('product_variants')
+        .select('*, blank_variants(*)')
+        .eq('id', data.variant_id || '')
+        .single()
+        .then(({ data, error }) => {
+          console.log(error);
 
-    return {
-      blank,
-      blankVariant
-    };
+          return data?.blank_variants || null;
+        });
+
+      if (!blank || !blankVariant) return null;
+
+      return {
+        blank,
+        blankVariant
+      };
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
   };
 
   const mediaArray = Array.from(mediaData?.files.edges || []).reduce((acc, edge) => {
@@ -73,6 +84,6 @@ export const getAssemblyItem = async (itemId: string) => {
     lineItem: data,
     shopifyLineItem,
     media: mediaArray,
-    blankData: blankPromise()
+    blankData: await blankPromise()
   };
 };

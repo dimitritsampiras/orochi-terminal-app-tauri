@@ -46,22 +46,7 @@
   let selectedPrintId: string = '';
   let isLoading = false;
 
-  let blankData: Awaited<typeof data.blankData>;
-  let isBlankDataLoading = false;
-
   let openState = false;
-  $: {
-    isBlankDataLoading = true;
-    data.blankData
-      .then((result) => {
-        blankData = result;
-        isBlankDataLoading = false;
-      })
-      .catch((error) => {
-        console.error('Error loading blank data:', error);
-        isBlankDataLoading = false;
-      });
-  }
 
   async function handleReset() {
     isLoading = true;
@@ -179,12 +164,12 @@
     if (activePrintLogs !== undefined && totalPrints !== undefined) {
       let updater = undefined;
       if (!lineItem?.has_deprecated_blank_stock || shouldDeprateBlank) {
-        if (blankData) {
-          const { quantity } = blankData.blankVariant;
+        if (data.blankData) {
+          const { quantity } = data.blankData.blankVariant;
           await supabase
             .from('blank_variants')
             .update({ quantity: quantity > 0 ? quantity - 1 : 0 })
-            .eq('id', blankData.blankVariant.id);
+            .eq('id', data.blankData.blankVariant.id);
         }
 
         updater = { has_deprecated_blank_stock: true };
@@ -367,7 +352,7 @@
               <img src={media.url} alt={media.alt} />
               <Dialog.Root>
                 <Dialog.Trigger class="absolute left-2 top-2">
-                  <Button variant="outline" class="bg-white" size="icon">
+                  <Button variant="outline" class="bg-white h-8 w-8" size="icon">
                     <PhImageSquare />
                   </Button>
                 </Dialog.Trigger>
@@ -575,20 +560,12 @@
         <OrderInfo order={data.lineItem.order} currentId={data.lineItem.id} />
         <div class="mt-4 flex flex-row gap-4">
           <div class="flex-1">
-            {#if !blankData}
-              {#if isBlankDataLoading}
-                <div class="h-full w-full rounded-xl border bg-white p-4">loading...</div>
-              {:else}
-                <div
-                  class="flex h-full w-full items-center justify-center rounded-xl border bg-white p-4"
-                >
-                  no blank
-                </div>
-              {/if}
+            {#if !data.blankData}
+              <div class="h-full w-full rounded-xl border bg-white p-4">no blank data</div>
             {:else}
               <BlankInfo
-                blank={blankData?.blank}
-                blankVariant={blankData?.blankVariant}
+                blank={data.blankData.blank}
+                blankVariant={data.blankData?.blankVariant}
                 hasBeenDeprecated={data.lineItem.has_deprecated_blank_stock}
               />
             {/if}

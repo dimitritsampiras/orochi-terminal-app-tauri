@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types/database';
 
-console.log('hereee');
+console.log('hereee', import.meta.env);
 
 export const supabase = createClient<Database>(
   import.meta.env.VITE_SUPABASE_URL,
