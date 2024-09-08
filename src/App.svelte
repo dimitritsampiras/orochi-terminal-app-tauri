@@ -19,7 +19,7 @@
 <QueryClientProvider client={queryClient}>
   <main class="bg-gray-50 min-h-lvh">
     <Router {url}>
-      <nav class="flex items-center space-x-4 lg:space-x-6 bg-white border-b p-4">
+      <nav class="flex items-center space-x-4 lg:space-x-6 bg-white border-b p-3">
         <Link to="/" let:active>
           <span class={cn(!active && 'text-gray-600', 'hover:cursor-pointer')}>Assembly</span>
         </Link>
@@ -27,7 +27,7 @@
           <span class={cn(!active && 'text-gray-600', 'hover:cursor-pointer')}>Settings</span>
         </Link>
       </nav>
-      <div class="p-8">
+      <div class="p-6">
         <Route path="/">
           <AssemblyLine />
         </Route>

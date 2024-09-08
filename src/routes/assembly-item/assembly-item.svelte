@@ -342,36 +342,6 @@
     </div>
   </div>
 
-  {#if !data.lineItem.product}
-    <Alert.Root class="my-4 w-fit border-red-200 bg-red-50 text-red-700">
-      <PhWarning class="h-4 w-4" />
-      <Alert.Title>Product does not exist</Alert.Title>
-      <Alert.Description>
-        Either the product has been deleted or the line item is an edge case.
-      </Alert.Description>
-    </Alert.Root>
-  {/if}
-
-  {#if data.lineItem.quantity > 1}
-    <Alert.Root class="my-4 w-fit border-amber-200 bg-amber-50 text-amber-700">
-      <PhWarning class="h-4 w-4" />
-      <Alert.Title>Multiple Quantity</Alert.Title>
-      <Alert.Description>
-        This line item has a quantity of {data.lineItem.quantity}. The app doesnt support
-        multiple quantities. The second item needs to be printed manually.
-      </Alert.Description>
-    </Alert.Root>
-  {/if}
-  {#if data.lineItem.order?.display_fulfillment_status === 'FULFILLED'}
-    <Alert.Root class="my-4 w-fit">
-      <PhWarning class="h-4 w-4" />
-      <Alert.Title>Order already fulfilled</Alert.Title>
-      <Alert.Description
-        >Ensure that it was intential for this item to be in the assembly line.</Alert.Description
-      >
-    </Alert.Root>
-  {/if}
-
   <div class="grid-cols-[1fr_1fr] gap-4 lg:grid">
     <div class="flex flex-col gap-4">
       <div class="mb-4">
@@ -381,7 +351,7 @@
       <!-- MEDIA -->
       <div
         class={cn(
-          'grid grid-cols-4 gap-4',
+          'grid grid-cols-4 gap-4 max-w-[30rem]',
           data.media.length > 2 ? 'grid-rows-3' : 'grid-rows-2'
         )}
       >
@@ -498,10 +468,9 @@
                   isLoading}
                 on:click={markAsPrintedCatch}>Mark As Printed</Button
               >
-            </div>
-            <div>
+
               <Button
-                class="mt-4 px-12"
+                class="px-12"
                 disabled={!selectedPrintId ||
                   getPrintStatus(selectedPrintId) === 'printed' ||
                   isLoading ||
@@ -511,6 +480,8 @@
                   markAsPrintedCatch();
                 }}>Print and Open</Button
               >
+            </div>
+            <div>
               <div class={cn('mt-2')}>
                 {#if selectedPrintId}
                   {#if fileExists}
@@ -571,6 +542,35 @@
       {/if}
     </div>
     <div class="mt-4">
+      {#if !data.lineItem.product}
+        <Alert.Root class="my-4 w-fit border-red-200 bg-red-50 text-red-700">
+          <PhWarning class="h-4 w-4" />
+          <Alert.Title>Product does not exist</Alert.Title>
+          <Alert.Description>
+            Either the product has been deleted or the line item is an edge case.
+          </Alert.Description>
+        </Alert.Root>
+      {/if}
+
+      {#if data.lineItem.quantity > 1}
+        <Alert.Root class="my-4 w-fit border-amber-200 bg-amber-50 text-amber-700">
+          <PhWarning class="h-4 w-4" />
+          <Alert.Title>Multiple Quantity</Alert.Title>
+          <Alert.Description>
+            This line item has a quantity of {data.lineItem.quantity}. The app doesnt support
+            multiple quantities. The second item needs to be printed manually.
+          </Alert.Description>
+        </Alert.Root>
+      {/if}
+      {#if data.lineItem.order?.display_fulfillment_status === 'FULFILLED'}
+        <Alert.Root class="my-4 w-fit border-amber-200 bg-amber-50 text-amber-700">
+          <PhWarning class="h-4 w-4" />
+          <Alert.Title>Order already fulfilled</Alert.Title>
+          <Alert.Description
+            >Ensure that it was intential for this item to be in the assembly line.</Alert.Description
+          >
+        </Alert.Root>
+      {/if}
       {#if data.lineItem.order}
         <OrderInfo order={data.lineItem.order} currentId={data.lineItem.id} />
         <div class="mt-4 flex flex-row gap-4">
