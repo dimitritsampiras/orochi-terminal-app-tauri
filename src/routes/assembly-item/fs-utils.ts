@@ -22,7 +22,7 @@ export const getFullPath = async (rootDir: string, lineItem: LineItem, index: nu
   const filename = [baseName, color, size, `${index}`].filter(Boolean).join('_') + '.arxp';
 
   // Construct full path
-  const fullPath = await path.join(rootDir, baseName, color, filename);
+  const fullPath = await path.join(rootDir, baseName, color, normalize(filename));
 
   return fullPath;
 };
@@ -34,3 +34,5 @@ export const doesFileExist = async (path: string) => {
 export const openFile = async (file: string) => {
   await shell.open(file);
 };
+
+const normalize = (str: string) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
