@@ -7,20 +7,18 @@ const query = supabase
   .from('batches')
   .select(
     `
+*,
+orders(
+  line_items(
     *,
-    orders_batches!inner(
-      order:orders!inner(
-        line_items(
-          *,
-          products(id, prints(*), blanks(*)),
-          product_variants(id, warehouse_inventory, blank_variants(*))
-        )
-      )
-    )
-    `
+    order:orders(*, line_items(id)),
+    products(id, is_black_label, prints(*), blanks(*)),
+    product_variants(id, warehouse_inventory, blank_variants(*))
   )
+)
+`
+  )
+
   .single();
 
-export type AssemblyLineItem = QueryData<
-  typeof query
->['orders_batches'][number]['order']['line_items'][number];
+export type AssemblyLineItem = QueryData<typeof query>['orders'][number]['line_items'][number];

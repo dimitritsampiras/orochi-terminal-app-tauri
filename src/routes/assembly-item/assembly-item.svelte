@@ -225,6 +225,8 @@
     navigateToLineItem(index); // index is already the next item because it's 1-based
   }
 
+  $: console.log('line item id,', data.lineItem.id);
+
   let subscription: RealtimeChannel;
   let batchSubscription: RealtimeChannel;
 
@@ -240,6 +242,8 @@
           filter: `id=eq.${data.lineItem.id}`
         },
         async () => {
+          console.log('hereee!');
+
           // invalidate('app:line_item');
           // invalidate('app:assembly');
           dispatch('refetch');

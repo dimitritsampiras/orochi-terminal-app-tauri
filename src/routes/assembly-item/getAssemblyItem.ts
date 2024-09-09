@@ -7,7 +7,7 @@ import type { QueryData } from '@supabase/supabase-js';
 import axios from 'axios';
 import invariant from 'tiny-invariant';
 
-const queryString =
+export const queryString =
   '*, product_variants(*), order:orders(*,line_items(*)), print_logs(*), product:products(*, prints(*))';
 
 const query = supabase.from('line_items').select(queryString).single();

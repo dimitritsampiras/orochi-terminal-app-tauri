@@ -4,7 +4,6 @@
   import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
   import BackButton from '$lib/components/ui/back-button.svelte';
   import { createQuery } from '@tanstack/svelte-query';
-  import { navigate } from 'svelte-routing';
 
   export let itemId;
 
@@ -16,11 +15,17 @@
     }
   });
 
-  const handleRefetch = () => {
-    $query.refetch();
+  const handleRefetch = async () => {
+    console.log('here!');
+
+    await $query.refetch();
   };
 
-  $: itemId && $query.refetch();
+  $: if (itemId !== $query.data?.lineItem.id) {
+    console.log('here again');
+
+    handleRefetch();
+  }
 </script>
 
 {#if $query.isLoading}
