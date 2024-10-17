@@ -352,11 +352,13 @@
               i >= 2 && 'row-start-3'
             )}
           >
-            <div class="relative overflow-clip rounded-xl border bg-white">
-              <img src={media.url} alt={media.alt} />
+            <div
+              class="relative flex items-center justify-center overflow-clip rounded-xl border bg-white"
+            >
+              <img src={media.url} alt={media.alt} class="h-40 w-40 object-contain" />
               <Dialog.Root>
                 <Dialog.Trigger class="absolute left-2 top-2">
-                  <Button variant="outline" class="bg-white h-8 w-8" size="icon">
+                  <Button variant="outline" class="bg-white" size="icon">
                     <PhImageSquare />
                   </Button>
                 </Dialog.Trigger>

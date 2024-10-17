@@ -14,6 +14,10 @@
   import { lineItemIds } from '$lib/store';
   import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 
+  import * as Collapsible from '$lib/components/ui/collapsible';
+  import CaretSort from 'svelte-radix/CaretSort.svelte';
+  import Button from '$lib/components/ui/button/button.svelte';
+
   // let data = { batch: null, lineItems: [] } as {
   //   batch: Tables<'batches'> | null;
   //   lineItems: AssemblyLineItem[];
@@ -88,6 +92,10 @@
     }
   });
 
+  $: stockedItems = $query.data?.assemblyLine.lineItems.filter(
+    (item) => (item.product_variants?.warehouse_inventory || 0) > 0
+  ) || [];
+
   $: lineItemIds.set($query.data?.assemblyLine.lineItems.map((i) => i.id) || []);
 </script>
 
@@ -102,6 +110,31 @@
   </div>
 {:else}
   <p>Session: {$query.data?.assemblyLine.batch.id}</p>
+
+  <Collapsible.Root class="my-4 rounded-xl border border-purple-200 bg-purple-50 p-4 text-sm">
+    <Collapsible.Trigger class="flex w-full items-center font-semibold">
+      Items that are in stock ({stockedItems.length})
+      <Button size="iconsm" variant="outline" class="ml-4">
+        <CaretSort />
+      </Button>
+    </Collapsible.Trigger>
+    <Collapsible.Content class="mt-4">
+      {#each stockedItems as stockedItem}
+        <div class="flex gap-4">
+          <a
+            class="hover:cursor-pointer hover:underline"
+            href={stockedItem.product_id
+              ? `/products/${stockedItem.product_id?.split('/').pop()}`
+              : `#`}>{stockedItem.name}</a
+          >
+          <div class="text-purple-600">
+            {stockedItem.product_variants?.warehouse_inventory}
+          </div>
+        </div>
+      {/each}
+    </Collapsible.Content>
+  </Collapsible.Root>
+
   <div class="my-4 flex justify-between">
     <Input class="w-fit bg-white" placeholder="search item" bind:value={searchTerm} />
   </div>
