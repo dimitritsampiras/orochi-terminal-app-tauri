@@ -341,7 +341,7 @@
       <div
         class={cn(
           'grid grid-cols-4 gap-4 max-w-[30rem]',
-          data.media.length > 2 ? 'grid-rows-3' : 'grid-rows-2'
+          data.media.length > 2 ? 'grid-rows-2' : 'grid-rows-2'
         )}
       >
         {#each slicedMedia as media, i}
