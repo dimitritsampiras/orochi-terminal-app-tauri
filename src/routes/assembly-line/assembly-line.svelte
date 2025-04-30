@@ -17,30 +17,14 @@
   import * as Collapsible from '$lib/components/ui/collapsible';
   import CaretSort from 'svelte-radix/CaretSort.svelte';
   import Button from '$lib/components/ui/button/button.svelte';
+  import { createQuery } from '@tanstack/svelte-query';
 
-  // let data = { batch: null, lineItems: [] } as {
-  //   batch: Tables<'batches'> | null;
-  //   lineItems: AssemblyLineItem[];
   // };
 
   let subscription: RealtimeChannel;
   let batchSubscription: RealtimeChannel;
 
   let searchTerm = '';
-
-  // $: {
-  //   if (data.lineItems) {
-  //     if (searchTerm) {
-  //       filteredLineItems = data.lineItems.filter((item) =>
-  //         item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  //       );
-  //     } else {
-  //       filteredLineItems = data.lineItems;
-  //     }
-  //   }
-  // }
-
-  import { createQuery } from '@tanstack/svelte-query';
 
   const query = createQuery({
     queryKey: ['assembly'],
@@ -92,9 +76,10 @@
     }
   });
 
-  $: stockedItems = $query.data?.assemblyLine.lineItems.filter(
-    (item) => (item.product_variants?.warehouse_inventory || 0) > 0
-  ) || [];
+  $: stockedItems =
+    $query.data?.assemblyLine.lineItems.filter(
+      (item) => (item.product_variants?.warehouse_inventory || 0) > 0
+    ) || [];
 
   $: lineItemIds.set($query.data?.assemblyLine.lineItems.map((i) => i.id) || []);
 </script>

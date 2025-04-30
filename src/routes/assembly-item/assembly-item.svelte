@@ -302,6 +302,13 @@
   }
 
   $: console.log(fileExists, arxpPath, data.lineItem.id);
+
+  $: batchWarning = data.lineItem.order?.batches
+    ? data.lineItem.order?.batches?.length >= 2 &&
+      new Date(data.lineItem.order.batches[0].created_at).getTime() -
+        new Date(data.lineItem.order.batches[1].created_at).getTime() <
+        7 * 24 * 60 * 60 * 1000
+    : false;
 </script>
 
 <div>
@@ -333,8 +340,82 @@
 
   <div class="grid-cols-[1fr_1fr] gap-4 lg:grid">
     <div class="flex flex-col gap-4">
-      <div class="mb-4">
-        <StatusBadge status={data.lineItem.completion_status} />
+      <div>
+        <div class="mb-4">
+          <StatusBadge status={data.lineItem.completion_status} />
+        </div>
+
+        {#if !data.lineItem.product}
+          <Alert.Root class="my-4 w-fit border-red-200 bg-red-50 text-red-700">
+            <PhWarning class="h-4 w-4" />
+            <Alert.Title>Product does not exist</Alert.Title>
+            <Alert.Description>
+              Either the product has been deleted or the line item is an edge case.
+            </Alert.Description>
+          </Alert.Root>
+        {/if}
+
+        {#if data.lineItem.quantity > 1}
+          <Alert.Root class="my-4 w-fit border-amber-200 bg-amber-50 text-amber-700">
+            <PhWarning class="h-4 w-4" />
+            <Alert.Title>Multiple Quantity</Alert.Title>
+            <Alert.Description>
+              This line item has a quantity of {data.lineItem.quantity}. The app doesnt support
+              multiple quantities. The second item needs to be printed manually.
+            </Alert.Description>
+          </Alert.Root>
+        {/if}
+        {#if data.lineItem.order?.display_fulfillment_status === 'FULFILLED'}
+          <Alert.Root class="my-4 w-fit">
+            <PhWarning class="h-4 w-4" />
+            <Alert.Title>Order already fulfilled</Alert.Title>
+            <Alert.Description
+              >Ensure that it was intential for this item to be in the assembly line.</Alert.Description
+            >
+          </Alert.Root>
+        {/if}
+
+        <div>
+          {#if data.shopifyLineItem}
+            <div class="flex flex-col gap-2 mb-4">
+              {#if data?.shopifyLineItem?.nonFulfillableQuantity && data?.shopifyLineItem?.nonFulfillableQuantity > 0}
+                <div class="rounded-lg border border-gray-200 bg-gray-50 p-2 text-gray-700">
+                  Nonfulfillable Quantity: 0
+                </div>
+              {/if}
+              {#if data?.shopifyLineItem?.unfulfilledQuantity && data?.shopifyLineItem?.unfulfilledQuantity > 0}
+                <div
+                  class="w-fit rounded-lg border border-yellow-200 bg-yellow-50 p-2 text-yellow-700 text-sm"
+                >
+                  Requires Fulfillement (good to print)
+                </div>
+              {:else}
+                <div
+                  class="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-emerald-700"
+                >
+                  No fulfillment needed (ignore)
+                </div>
+              {/if}
+              {#if !data?.shopifyLineItem?.requiresShipping}
+                <div class="rounded-lg border border-red-200 bg-red-50 p-2 text-red-700">
+                  Unshippable
+                </div>
+              {/if}
+            </div>
+          {/if}
+          {#if batchWarning}
+            <Alert.Root class="w-fit border-rose-200 bg-rose-50 text-rose-700">
+              <PhWarning class="h-4 w-4" />
+              <Alert.Title>Recent Session Activity</Alert.Title>
+              <Alert.Description>
+                This order appears in multiple recent sessions. Please verify this is
+                intentional. {data.lineItem.order?.batches
+                  .map((batch) => new Date(batch.created_at).toLocaleDateString())
+                  .join(', ')}
+              </Alert.Description>
+            </Alert.Root>
+          {/if}
+        </div>
       </div>
 
       <!-- MEDIA -->

@@ -8,7 +8,7 @@ import axios from 'axios';
 import invariant from 'tiny-invariant';
 
 export const queryString =
-  '*, product_variants(*), order:orders(*,line_items(*)), print_logs(*), product:products(*, prints(*))';
+  '*, product_variants(*), order:orders(*, batches(id,created_at),line_items(*)), print_logs(*), product:products(*, prints(*))';
 
 const query = supabase.from('line_items').select(queryString).single();
 
