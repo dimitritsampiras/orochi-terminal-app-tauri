@@ -9,7 +9,9 @@ export const getFullPath = async (rootDir: string, lineItem: LineItem, index: nu
   const parts = lineItem.name.split('-').map((part) => part.trim());
 
   // Extract base name (everything before the first dash)
-  const baseName = normalize(parts[0].split(' ').slice(0, -1).join('_').toLowerCase());
+  // Remove "Box" so "Run Club Box Hoodie" acts like "Run Club Hoodie" -> "run_club"
+  const nameWithoutBox = parts[0].replace(/\bBox\b/g, '').trim();
+  const baseName = normalize(nameWithoutBox.split(/\s+/).slice(0, -1).join('_').toLowerCase());
 
   // Extract color (second part if it exists, otherwise 'default')
   const color = parts[1] ? parts[1].toLowerCase().replace(/\s+/g, '_') : 'default';
